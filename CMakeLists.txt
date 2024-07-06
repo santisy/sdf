@@ -23,9 +23,7 @@ set( CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" )
 set( INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include" )
 set( SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src" )
 
-option( SDF_USE_SYSTEM_EIGEN
-    "Use system Eigen. If false, please set EIGEN_INCLUDE_DIR manually" ON )
-option( SDF_BUILD_DEMO "Build the demo program, if meshview available" ON )
+option( SDF_BUILD_DEMO "Build the demo program, if meshview available" OFF )
 option( SDF_BUILD_PYTHON "Build the python bindings, if pybind11 available" OFF )
 option( SDF_BUILD_INSTALL "Build the install target" ON )
 
@@ -41,19 +39,14 @@ endif ( )
 
 file(GLOB SDF_SOURCES ${SRC_DIR}/*.cpp)
 set(SDF_PUBLIC_HEADERS ${INCLUDE_DIR}/sdf/sdf.hpp)
+add_compile_options(-fPIC)
 
 set( DEPENDENCIES )
 
 find_package(Threads REQUIRED)
 
-if (SDF_USE_SYSTEM_EIGEN)
-    find_package(Eigen3 3.3 REQUIRED NO_MODULE)
-    message(STATUS "Using system Eigen")
-    set(DEPENDENCIES ${DEPENDENCIES} Eigen3::Eigen)
-else()
-    # Set EIGEN_INCLUDE_DIR manually
-    include_directories(${EIGEN_INCLUDE_DIR})
-endif()
+# Set EIGEN_INCLUDE_DIR manually
+include_directories(${CMAKE_SOURCE_DIR}/eigen)
 
 # Optional sxyu/meshview
 find_package( meshview )
